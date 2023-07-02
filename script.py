@@ -25,9 +25,10 @@ subprocess.run([
     "--external-downloader",
     "aria2c",
     "--username",
-    "add username here",
+    "USERNAME/EMAIL HERE",
     "--password",
-    "enter pass here",
+    "PASSWORD HERE",
+    "--write-subs",
     "--ffmpeg-location",
     "/usr/bin/ffmpeg",
     url
@@ -41,32 +42,58 @@ for file in os.listdir():
         break
 
 if filename:
-    # Mux the downloaded video into .mkv format using FFmpeg
-    subprocess.run([
-        "/usr/bin/ffmpeg",
-        "-i",
-        f"{filename}.mp4",
-        "-c",
-        "copy",
-        f"{filename}.mkv"
-    ])
+    # Find the subtitle file with .vtt extension
+    subtitle = None
+    for file in os.listdir():
+        if file.endswith(".vtt"):
+            subtitle = os.path.splitext(file)[0]
+            break
 
-    # Deleting the original .mp4 file
-    os.remove(f"{filename}.mp4")
+    if subtitle:
+        # Convert the subtitle from .vtt to .srt format using FFmpeg
+        subprocess.run([
+            "/usr/bin/ffmpeg",
+            "-i",
+            f"{subtitle}.vtt",
+            f"{subtitle}.srt"
+        ])
 
-    # Upload the .mkv file to Google Drive using rclone with progress
-    subprocess.run([
-        "gclone",
-        "--config",
-        "/home/ubuntu/Downloads/sab/scripts/rclone.conf",
-        "move",
-        f"{filename}.mkv",
-        "share:test",
-	"--drive-chunk-size",
-	"256M",
-	"--transfers",
-	"20",
-        "-P"
-    ])
+        # Mux the downloaded video and converted subtitle into .mkv format using FFmpeg
+        subprocess.run([
+            "/usr/bin/ffmpeg",
+            "-i",
+            f"{filename}.mp4",
+            "-i",
+            f"{subtitle}.srt",
+            "-c",
+            "copy",
+            "-scodec",
+            "srt",
+            f"{filename}.mkv"
+        ])
+
+        # Deleting the original .mp4, .vtt, and .srt files
+        os.remove(f"{filename}.mp4")
+        os.remove(f"{subtitle}.vtt")
+        os.remove(f"{subtitle}.srt")
+
+        # Upload the .mkv file to Google Drive using rclone
+        subprocess.run([
+            "gclone",
+            "--config",
+            "/home/ubuntu/Downloads/sab/scripts/rclone.conf",
+            "move",
+            f"{filename}.mkv",
+            "share:test",
+            "--drive-chunk-size",
+            "256M",
+            "--transfers",
+            "20",
+            "-P"
+        ])
+
+        print("Video and subtitles muxed successfully!")
+    else:
+        print("No .vtt subtitle file found.")
 else:
     print("No .mp4 file found.")

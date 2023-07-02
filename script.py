@@ -81,7 +81,7 @@ if filename:
         subprocess.run([
             "gclone",
             "--config",
-            "/home/ubuntu/Downloads/sab/scripts/rclone.conf",
+            "/path/to/rclone.conf",
             "move",
             f"{filename}.mkv",
             "share:test",

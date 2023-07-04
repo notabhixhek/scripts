@@ -84,7 +84,7 @@ if filename:
             "/path/to/rclone.conf",
             "move",
             f"{filename}.mkv",
-            "share:test",
+            "remote:",
             "--drive-chunk-size",
             "256M",
             "--transfers",

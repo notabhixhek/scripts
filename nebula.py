@@ -2,24 +2,24 @@ import os
 import subprocess
 import datetime
 
-# Create a directory with prefix and date stamp
-prefix = "Nebula"
+# Create Dir
+prefix = "nebula"
 timestamp = datetime.datetime.now().strftime("%Y%m%d")
 directory = f"{prefix}_{timestamp}"
 
-# Check if the directory already exists
+# Check if dir exists
 if os.path.exists(directory):
     print("Directory already exists. Using existing directory.")
 else:
     os.mkdir(directory)
 
-# Navigate to the created or existing directory
+# go to dir
 os.chdir(directory)
 
-# Prompt the user to enter the URL
+# prompt user for URL
 url = input("Enter the URL: ")
 
-# Download the video using yt-dlp
+# initiate yt-dlp to download
 subprocess.run([
     "yt-dlp",
     "--external-downloader",
@@ -34,7 +34,7 @@ subprocess.run([
     url
 ])
 
-# Get the downloaded video file name
+# mehhhh
 filename = None
 for file in os.listdir():
     if file.endswith(".mp4"):
@@ -50,7 +50,7 @@ if filename:
             break
 
     if subtitle:
-        # Convert the subtitle from .vtt to .srt format using FFmpeg
+        # convrt vtt to srt
         subprocess.run([
             "/usr/bin/ffmpeg",
             "-i",
@@ -58,7 +58,7 @@ if filename:
             f"{subtitle}.srt"
         ])
 
-        # Mux the downloaded video and converted subtitle into .mkv format using FFmpeg
+        # muxvux
         subprocess.run([
             "/usr/bin/ffmpeg",
             "-i",
@@ -72,12 +72,12 @@ if filename:
             f"{filename}.mkv"
         ])
 
-        # Deleting the original .mp4, .vtt, and .srt files
+        # delete the files
         os.remove(f"{filename}.mp4")
         os.remove(f"{subtitle}.vtt")
         os.remove(f"{subtitle}.srt")
 
-        # Upload the .mkv file to Google Drive using rclone
+        # rclonrrrrr
         subprocess.run([
             "gclone",
             "--config",
@@ -92,7 +92,7 @@ if filename:
             "-P"
         ])
 
-        print("Video and subtitles muxed successfully!")
+        print("done!")
     else:
         print("No .vtt subtitle file found.")
 else:

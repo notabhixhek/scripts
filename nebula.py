@@ -3,7 +3,7 @@ import subprocess
 import datetime
 
 # Create a directory with prefix and date stamp
-prefix = "Ripped"
+prefix = "Nebula"
 timestamp = datetime.datetime.now().strftime("%Y%m%d")
 directory = f"{prefix}_{timestamp}"
 

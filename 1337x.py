@@ -1,3 +1,4 @@
+# Based on Imyr's 1337x Scraper: https://github.com/Imyr/Scrapers/blob/main/_1337x.to_.py
 from bs4 import BeautifulSoup
 import requests
 import re
